@@ -7,8 +7,9 @@ services:
     ec-node:
         container_name: "${DOCKER_APP}-ec-node"
         build: "./docker/node"
-        expose:
+        ports:
             - "3000"
+            - "9229"
         environment:
             MYSQL_USER: "${MYSQL_USERNAME}"
             MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
