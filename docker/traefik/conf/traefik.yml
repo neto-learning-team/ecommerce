@@ -1,0 +1,37 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+# tracing: {}
+
+# (Optional) Log information
+# ---
+log:
+ level: DEBUG  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+#   format: common  # common, json, logfmt
+#   filePath: /var/log/traefik/traefik.log
+
+# (Optional) Accesslog
+# ---
+# accesslog:
+  # format: common  # common, json, logfmt
+  # filePath: /var/log/traefik/access.log
+
+# (Optional) Enable API and Dashboard
+# ---
+api:
+ dashboard: true  # true by default
+ insecure: true  # Don't do this in production!
+
+# Entry Points configuration
+# ---
+entryPoints:
+  web:
+    address: :80
+
+# Provider Configuration
+# ---
+providers:
+# DOCKER:
+  docker:
+    exposedByDefault: false  # Default is true
