@@ -7,61 +7,77 @@ services:
     ec-node:
         container_name: "${DOCKER_APP}-ec-node"
         build: "./docker/node"
-        restart: "no"
         expose:
             - "3000"
         volumes:
             - "./webapp:/usr/src/app"
-            # - "./admin/build:/var/www/html/admin/build"
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.ec-node.entrypoints=web"
             - "traefik.http.routers.ec-node.rule=Host(`${APP_DOMAIN}`) || Host(`api.${APP_DOMAIN}`)"
             - "traefik.http.services.ec-node.loadbalancer.server.port=3000"
         depends_on:
-            - ec-mysql
+            # - ec-mysql
+            - ec-mongo
         networks:
             backend:
                 ipv4_address: "${DOCKER_IPV4_BASE}.5"
     # =======================
-    # Mysql containers
+    # Nginx for admin
     # =======================
-    ec-mysql:
-        container_name: "${DOCKER_APP}-ec-mysql"
-        build: "./docker/mysql"
-        restart: "no"
+    ec-nginx:
+        container_name: "${DOCKER_APP}-nginx"
+        build: "./docker/nginx"
+        tty: true
         expose:
-            - "3306"
-        environment:
-            MYSQL_USER: "${MYSQL_USERNAME}"
-            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-            MYSQL_DATABASE: "${MYSQL_DATABASE}"
-            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            - "80"
         volumes:
-            - "./docker/mysql/data:/var/lib/mysql"
-            - "./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
+            - "./admin/build:/usr/share/nginx/html"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.ec-nginx.entrypoints=web"
+            - "traefik.http.routers.ec-nginx.rule=Host(`admin.${APP_DOMAIN}`)"
         networks:
             backend:
                 ipv4_address: "${DOCKER_IPV4_BASE}.10"
-    ec-phpmyadmin:
-        container_name: "${DOCKER_APP}-ec-phpmyadmin"
-        image: phpmyadmin/phpmyadmin:latest
-        expose:
-            - "80"
-        labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.ec-phpmyadmin.entrypoints=web"
-            - "traefik.http.routers.ec-phpmyadmin.rule=Host(`pma.${APP_DOMAIN}`)"
-        environment:
-            - "PMA_HOST=${MYSQL_HOST}"
-            - "PMA_PORT=${MYSQL_PORT}"
-            - "PMA_USER=${MYSQL_USERNAME}"
-            - "PMA_PASSWORD=${MYSQL_PASSWORD}"
-        depends_on:
-            - ec-mysql
-        networks:
-            backend:
-                ipv4_address: "${DOCKER_IPV4_BASE}.15"
+    # =======================
+    # Mysql containers
+    # =======================
+    # ec-mysql:
+    #     container_name: "${DOCKER_APP}-ec-mysql"
+    #     build: "./docker/mysql"
+    #     expose:
+    #         - "3306"
+    #     environment:
+    #         MYSQL_USER: "${MYSQL_USERNAME}"
+    #         MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    #         MYSQL_DATABASE: "${MYSQL_DATABASE}"
+    #         MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    #     volumes:
+    #         - "./docker/mysql/data:/var/lib/mysql"
+    #         - "./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
+    #     networks:
+    #         backend:
+    #             ipv4_address: "${DOCKER_IPV4_BASE}.15"
+    # ec-phpmyadmin:
+    #     container_name: "${DOCKER_APP}-ec-phpmyadmin"
+    #     image: phpmyadmin/phpmyadmin:latest
+    #     expose:
+    #         - "80"
+    #     labels:
+    #         - "traefik.enable=true"
+    #         - "traefik.http.routers.ec-phpmyadmin.entrypoints=web"
+    #         - "traefik.http.routers.ec-phpmyadmin.rule=Host(`pma.${APP_DOMAIN}`)"
+    #     environment:
+    #         - "PMA_HOST=${MYSQL_HOST}"
+    #         - "PMA_PORT=${MYSQL_PORT}"
+    #         - "PMA_USER=${MYSQL_USERNAME}"
+    #         - "PMA_PASSWORD=${MYSQL_PASSWORD}"
+    #     depends_on:
+    #         - ec-mysql
+    #     networks:
+    #         backend:
+    #             ipv4_address: "${DOCKER_IPV4_BASE}.20"
     # =======================
     # Mongo containers
     # =======================
@@ -77,7 +93,7 @@ services:
             - ./docker/mongo/data:/data/db
         networks:
             backend:
-                ipv4_address: "${DOCKER_IPV4_BASE}.20"
+                ipv4_address: "${DOCKER_IPV4_BASE}.25"
 
     ec-mongo-express:
         container_name: "${DOCKER_APP}-ec-mongo-express"
@@ -98,7 +114,25 @@ services:
             - ec-mongo
         networks:
             backend:
-                ipv4_address: "${DOCKER_IPV4_BASE}.25"
+                ipv4_address: "${DOCKER_IPV4_BASE}.30"
+
+    # =======================
+    # Mailhog
+    # =======================
+    ec-mailhog:
+        container_name: "${DOCKER_APP}-ec-mailhog"
+        image: "mailhog/mailhog:latest"
+        expose:
+            - "1025"
+            - "8025"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.ec-mailhog.entrypoints=web"
+            - "traefik.http.routers.ec-mailhog.rule=Host(`mailhog.${APP_DOMAIN}`)"
+            - "traefik.http.services.ec-mailhog.loadbalancer.server.port=8025"
+        networks:
+            backend:
+                ipv4_address: "${DOCKER_IPV4_BASE}.35"
 
     # =======================
     # Proxy reverso
@@ -115,32 +149,10 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         depends_on:
             - ec-node
-            - ec-blog
+            - ec-nginx
         networks:
             backend:
                 ipv4_address: "${DOCKER_IPV4_BASE}.2"
-                # aliases:
-                #     - "${APP_DOMAIN}"
-                #     - "api.${APP_DOMAIN}"
-                #     - "admin.${APP_DOMAIN}"
-    # =======================
-    # Mailhog
-    # =======================
-    ec-mailhog:
-        container_name: "${DOCKER_APP}-ec-mailhog"
-        image: "mailhog/mailhog:latest"
-        restart: "no"
-        expose:
-            - "1025"
-            - "8025"
-        labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.ec-mailhog.entrypoints=web"
-            - "traefik.http.routers.ec-mailhog.rule=Host(`mailhog.${APP_DOMAIN}`)"
-            - "traefik.http.services.ec-mailhog.loadbalancer.server.port=8025"
-        networks:
-            backend:
-                ipv4_address: "${DOCKER_IPV4_BASE}.30"
 
 networks:
     backend:
