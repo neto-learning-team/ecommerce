@@ -9,6 +9,11 @@ services:
         build: "./docker/node"
         expose:
             - "3000"
+        environment:
+            MYSQL_USER: "${MYSQL_USERNAME}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+            MYSQL_DATABASE: "${MYSQL_DATABASE}"
+            HOST: "${DOCKER_APP}-ec-mysql"
         volumes:
             - "./webapp:/usr/src/app"
         labels:
@@ -17,8 +22,8 @@ services:
             - "traefik.http.routers.ec-node.rule=Host(`${APP_DOMAIN}`) || Host(`api.${APP_DOMAIN}`)"
             - "traefik.http.services.ec-node.loadbalancer.server.port=3000"
         depends_on:
-            # - ec-mysql
-            - ec-mongo
+             - ec-mysql
+            # - ec-mongo
         networks:
             backend:
                 ipv4_address: "${DOCKER_IPV4_BASE}.5"
@@ -43,41 +48,41 @@ services:
     # =======================
     # Mysql containers
     # =======================
-    # ec-mysql:
-    #     container_name: "${DOCKER_APP}-ec-mysql"
-    #     build: "./docker/mysql"
-    #     expose:
-    #         - "3306"
-    #     environment:
-    #         MYSQL_USER: "${MYSQL_USERNAME}"
-    #         MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-    #         MYSQL_DATABASE: "${MYSQL_DATABASE}"
-    #         MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    #     volumes:
-    #         - "./docker/mysql/data:/var/lib/mysql"
-    #         - "./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
-    #     networks:
-    #         backend:
-    #             ipv4_address: "${DOCKER_IPV4_BASE}.15"
-    # ec-phpmyadmin:
-    #     container_name: "${DOCKER_APP}-ec-phpmyadmin"
-    #     image: phpmyadmin/phpmyadmin:latest
-    #     expose:
-    #         - "80"
-    #     labels:
-    #         - "traefik.enable=true"
-    #         - "traefik.http.routers.ec-phpmyadmin.entrypoints=web"
-    #         - "traefik.http.routers.ec-phpmyadmin.rule=Host(`pma.${APP_DOMAIN}`)"
-    #     environment:
-    #         - "PMA_HOST=${MYSQL_HOST}"
-    #         - "PMA_PORT=${MYSQL_PORT}"
-    #         - "PMA_USER=${MYSQL_USERNAME}"
-    #         - "PMA_PASSWORD=${MYSQL_PASSWORD}"
-    #     depends_on:
-    #         - ec-mysql
-    #     networks:
-    #         backend:
-    #             ipv4_address: "${DOCKER_IPV4_BASE}.20"
+    ec-mysql:
+        container_name: "${DOCKER_APP}-ec-mysql"
+        build: "./docker/mysql"
+        expose:
+            - "3306"
+        environment:
+            MYSQL_USER: "${MYSQL_USERNAME}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+            MYSQL_DATABASE: "${MYSQL_DATABASE}"
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        volumes:
+            - "./docker/mysql/data:/var/lib/mysql"
+            - "./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
+        networks:
+            backend:
+                ipv4_address: "${DOCKER_IPV4_BASE}.15"
+    ec-phpmyadmin:
+        container_name: "${DOCKER_APP}-ec-phpmyadmin"
+        image: phpmyadmin/phpmyadmin:latest
+        expose:
+            - "80"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.ec-phpmyadmin.entrypoints=web"
+            - "traefik.http.routers.ec-phpmyadmin.rule=Host(`pma.${APP_DOMAIN}`)"
+        environment:
+            - "PMA_HOST=${MYSQL_HOST}"
+            - "PMA_PORT=${MYSQL_PORT}"
+            - "PMA_USER=${MYSQL_USERNAME}"
+            - "PMA_PASSWORD=${MYSQL_PASSWORD}"
+        depends_on:
+            - ec-mysql
+        networks:
+            backend:
+                ipv4_address: "${DOCKER_IPV4_BASE}.20"
     # =======================
     # Mongo containers
     # =======================
