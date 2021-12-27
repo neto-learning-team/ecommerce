@@ -1,5 +1,4 @@
-
-export async function up(knex) {
+exports.up = async function (knex) {
     knex.schema.hasTable('produtos').then(async function (exists) {
         if (!exists) {
            await knex.schema.createTable('produtos', function (table) {
@@ -16,6 +15,6 @@ export async function up(knex) {
     });
 };
 
-export async function down(knex) {
+exports.down = async function (knex) {
     await knex.schema.dropTableIfExists('produtos').dropTableIfExists('categorias');
 };

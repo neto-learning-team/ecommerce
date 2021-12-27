@@ -1,4 +1,3 @@
-
 exports.up = async function (knex) {
     knex.schema.hasTable('categorias').then(async function (exists) {
         if (!exists) {
