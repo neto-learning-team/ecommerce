@@ -4,7 +4,7 @@ exports.up = async function (knex) {
         if (!exists) {
             await knex.schema.createTable('categorias', function (table) {
                 table.increments().notNullable();
-                table.text("descricao").notNullable();
+                table.text('descricao').notNullable();
             });
         };
     })
