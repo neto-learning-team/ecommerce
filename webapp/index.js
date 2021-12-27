@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 const routes = require('./api/routes')
 
-routes(app); 
+routes(app);
 //app.use(routes)
 
 app.listen(port, () => {
