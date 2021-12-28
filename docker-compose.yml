@@ -11,6 +11,12 @@ services:
             - "9229:9229"
         expose:
             - "3000"
+            - "9229"
+        environment:
+            MYSQL_USER: "${MYSQL_USERNAME}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+            MYSQL_DATABASE: "${MYSQL_DATABASE}"
+            HOST: "${DOCKER_APP}-ec-mysql"
         volumes:
             - "./webapp:/usr/src/app"
         labels:
@@ -20,8 +26,8 @@ services:
             - "traefik.http.routers.ec-node.service=ec-node"
             - "traefik.http.services.ec-node.loadbalancer.server.port=3000"
         depends_on:
-            # - ec-mysql
-            - ec-mongo
+             - ec-mysql
+            # - ec-mongo
         networks:
             backend:
                 ipv4_address: "${DOCKER_IPV4_BASE}.5"
@@ -46,78 +52,78 @@ services:
     # =======================
     # Mysql containers
     # =======================
-    # ec-mysql:
-    #     container_name: "${DOCKER_APP}-ec-mysql"
-    #     build: "./docker/mysql"
-    #     expose:
-    #         - "3306"
-    #     environment:
-    #         MYSQL_USER: "${MYSQL_USERNAME}"
-    #         MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-    #         MYSQL_DATABASE: "${MYSQL_DATABASE}"
-    #         MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    #     volumes:
-    #         - "./docker/mysql/data:/var/lib/mysql"
-    #         - "./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
-    #     networks:
-    #         backend:
-    #             ipv4_address: "${DOCKER_IPV4_BASE}.15"
-    # ec-phpmyadmin:
-    #     container_name: "${DOCKER_APP}-ec-phpmyadmin"
-    #     image: phpmyadmin/phpmyadmin:latest
-    #     expose:
-    #         - "80"
-    #     labels:
-    #         - "traefik.enable=true"
-    #         - "traefik.http.routers.ec-phpmyadmin.entrypoints=web"
-    #         - "traefik.http.routers.ec-phpmyadmin.rule=Host(`pma.${APP_DOMAIN}`)"
-    #     environment:
-    #         - "PMA_HOST=${MYSQL_HOST}"
-    #         - "PMA_PORT=${MYSQL_PORT}"
-    #         - "PMA_USER=${MYSQL_USERNAME}"
-    #         - "PMA_PASSWORD=${MYSQL_PASSWORD}"
-    #     depends_on:
-    #         - ec-mysql
-    #     networks:
-    #         backend:
-    #             ipv4_address: "${DOCKER_IPV4_BASE}.20"
+    ec-mysql:
+        container_name: "${DOCKER_APP}-ec-mysql"
+        build: "./docker/mysql"
+        expose:
+            - "3306"
+        environment:
+            MYSQL_USER: "${MYSQL_USERNAME}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+            MYSQL_DATABASE: "${MYSQL_DATABASE}"
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        volumes:
+            - "./docker/mysql/data:/var/lib/mysql"
+            - "./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
+        networks:
+            backend:
+                ipv4_address: "${DOCKER_IPV4_BASE}.15"
+    ec-phpmyadmin:
+        container_name: "${DOCKER_APP}-ec-phpmyadmin"
+        image: phpmyadmin/phpmyadmin:latest
+        expose:
+            - "80"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.ec-phpmyadmin.entrypoints=web"
+            - "traefik.http.routers.ec-phpmyadmin.rule=Host(`pma.${APP_DOMAIN}`)"
+        environment:
+            - "PMA_HOST=${MYSQL_HOST}"
+            - "PMA_PORT=${MYSQL_PORT}"
+            - "PMA_USER=${MYSQL_USERNAME}"
+            - "PMA_PASSWORD=${MYSQL_PASSWORD}"
+        depends_on:
+            - ec-mysql
+        networks:
+            backend:
+                ipv4_address: "${DOCKER_IPV4_BASE}.20"
     # =======================
     # Mongo containers
     # =======================
-    ec-mongo:
-        container_name: "${DOCKER_APP}-ec-mongo"
-        build: "./docker/mongo"
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
-            MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
-        expose:
-            - "${MONGO_PORT}"
-        volumes:
-            - ./docker/mongo/data:/data/db
-        networks:
-            backend:
-                ipv4_address: "${DOCKER_IPV4_BASE}.25"
+    # ec-mongo:
+    #     container_name: "${DOCKER_APP}-ec-mongo"
+    #     build: "./docker/mongo"
+    #     environment:
+    #         MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
+    #         MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+    #     expose:
+    #         - "${MONGO_PORT}"
+    #     volumes:
+    #         - ./docker/mongo/data:/data/db
+    #     networks:
+    #         backend:
+    #             ipv4_address: "${DOCKER_IPV4_BASE}.25"
 
-    ec-mongo-express:
-        container_name: "${DOCKER_APP}-ec-mongo-express"
-        image: mongo-express
-        expose:
-            - "8081"
-        environment:
-            ME_CONFIG_MONGODB_PORT: "${MONGO_PORT}"
-            ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_USERNAME}"
-            ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_PASSWORD}"
-            ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/
-        labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.ec-mongo-express.entrypoints=web"
-            - "traefik.http.routers.ec-mongo-express.rule=Host(`moe.${APP_DOMAIN}`)"
-            - "traefik.http.services.ec-mongo-express.loadbalancer.server.port=8081"
-        depends_on:
-            - ec-mongo
-        networks:
-            backend:
-                ipv4_address: "${DOCKER_IPV4_BASE}.30"
+    # ec-mongo-express:
+    #     container_name: "${DOCKER_APP}-ec-mongo-express"
+    #     image: mongo-express
+    #     expose:
+    #         - "8081"
+    #     environment:
+    #         ME_CONFIG_MONGODB_PORT: "${MONGO_PORT}"
+    #         ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_USERNAME}"
+    #         ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_PASSWORD}"
+    #         ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/
+    #     labels:
+    #         - "traefik.enable=true"
+    #         - "traefik.http.routers.ec-mongo-express.entrypoints=web"
+    #         - "traefik.http.routers.ec-mongo-express.rule=Host(`moe.${APP_DOMAIN}`)"
+    #         - "traefik.http.services.ec-mongo-express.loadbalancer.server.port=8081"
+    #     depends_on:
+    #         - ec-mongo
+    #     networks:
+    #         backend:
+    #             ipv4_address: "${DOCKER_IPV4_BASE}.30"
 
     # =======================
     # Mailhog
