@@ -1,8 +1,7 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react'
-import './style.css'
-import { faPhoneAlt, faEnvelope } from "@fortawesome/free-solid-svg-icons/"
-import { faFacebookF, faTwitter, faInstagram, faLinkedinIn, faBehance } from "@fortawesome/free-brands-svg-icons"
+const React = require('react');
+const { FontAwesomeIcon } = require( '@fortawesome/react-fontawesome');
+const { faPhoneAlt, faEnvelope } = require('@fortawesome/free-solid-svg-icons');
+const { faFacebookF, faTwitter, faInstagram, faLinkedinIn, faBehance } = require('@fortawesome/free-brands-svg-icons');
 
 
 export default function Header(props) {

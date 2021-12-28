@@ -1,7 +1,6 @@
-import React from 'react'
+const React = require('react');
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './style.css'
-import { faShoppingCart, faSearch, faBars } from "@fortawesome/free-solid-svg-icons/"
+import { faShoppingCart, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function Nav(props) {
