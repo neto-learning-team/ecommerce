@@ -8,6 +8,8 @@ services:
         container_name: "${DOCKER_APP}-ec-node"
         build: "./docker/node"
         ports:
+            - "9229:9229"
+        expose:
             - "3000"
             - "9229"
         environment:
@@ -21,6 +23,7 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.ec-node.entrypoints=web"
             - "traefik.http.routers.ec-node.rule=Host(`${APP_DOMAIN}`) || Host(`api.${APP_DOMAIN}`)"
+            - "traefik.http.routers.ec-node.service=ec-node"
             - "traefik.http.services.ec-node.loadbalancer.server.port=3000"
         depends_on:
              - ec-mysql

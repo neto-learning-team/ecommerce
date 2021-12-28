@@ -1,19 +1,16 @@
 {
-    "configurations": [
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to Remote",
-            "address": "127.0.0.1",
-            "port": 9229,
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/webapp",
-            "trace": true,
-            "sourceMaps": true,
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "restart": true
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Docker: Attach to Node",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}/webapp",
+      "remoteRoot": "/usr/src/app",
+      "protocol": "inspector"
+    }
+  ]
 }
