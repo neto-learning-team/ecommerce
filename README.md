@@ -30,9 +30,13 @@ em seguida volte a pasta raiz do projeto e rode o comando
 Se tudo der certo os endereços a seguir vão estar funcionando na sua máquina
 
 Web - http://dev.localhost
+
 Api - http://api.dev.localhost
+
 Phpmyadmin - http://pma.dev.localhost
+
 Mongo Express - http://moe.dev.localhost
+
 Mailhog - http://mailhog.dev.localhost
 
 Pra rodar o Admin é muito similar basta criar o arquivo .env.development.local existe um exemplo criado nesta pasta também o .env.example
