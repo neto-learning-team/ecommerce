@@ -1,5 +1,4 @@
-import React from 'react'
-import './style.css'
+const React = require('react');
 
 export default function Wallpaper(props) {
 
