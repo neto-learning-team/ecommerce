@@ -9,18 +9,18 @@ export default function Header(props) {
     return <header >
         <div className='header'>
             <ul className='contact'>
-                <li><FontAwesomeIcon icon={faPhoneAlt} /></li>
+                <li><a href=''><FontAwesomeIcon icon={faPhoneAlt} /></a></li>
                 <li><h3>+1 123 456 789</h3></li>
                 <li className='pipe'></li>
-                <li><FontAwesomeIcon icon={faEnvelope} /></li>
+                <li><a href=''><FontAwesomeIcon size='sm' icon={faEnvelope} /></a></li>
                 <li> <h3>info@company.com</h3></li>
             </ul>
             <ul className='social-media'>
-                <li><FontAwesomeIcon icon={faFacebookF} /></li>
-                <li><FontAwesomeIcon icon={faTwitter} /></li>
-                <li><FontAwesomeIcon icon={faInstagram} /></li>
-                <li><FontAwesomeIcon icon={faLinkedinIn} /></li>
-                <li><FontAwesomeIcon icon={faBehance} /></li>
+                <li><a href=''><FontAwesomeIcon icon={faFacebookF} /></a></li>
+                <li><a href=''><FontAwesomeIcon icon={faTwitter} /></a></li>
+                <li><a href=''><FontAwesomeIcon icon={faInstagram} /></a></li>
+                <li><a href=''><FontAwesomeIcon icon={faLinkedinIn} /></a></li>
+                <li><a href=''><FontAwesomeIcon icon={faBehance} /></a></li>
             </ul>
         </div>
     </header>

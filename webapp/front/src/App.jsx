@@ -7,10 +7,7 @@ function App() {
   return (
     <div className="App">
       <head>
-        <link rel="stylesheet" href="/stylesheets/App.css" />
-        <link rel="stylesheet" href="/stylesheets/Header.css" />
-        <link rel="stylesheet" href="/stylesheets/Nav.css" />
-        <link rel="stylesheet" href="/stylesheets/Wallpaper.css" />
+        <link rel="stylesheet" href="/stylesheets/style.css" />
       </head>
       <Header />
       <body>
