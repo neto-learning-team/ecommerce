@@ -2,6 +2,7 @@ const React = require('react');
 import Header from './components/header';
 import Nav from './components/nav';
 import Wallpaper from './components/wallpaper';
+import BestSellers from './components/bestSellers';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <body>
         <Nav />
         <Wallpaper />
-        Hello world
+        <BestSellers />
       </body>
     </div>
   );
